@@ -94,27 +94,6 @@ class LinkedList:
         self._count += 1    
         return
 
-    def insert2(self, data, index = 0):
-        if index < 0 or index > self._count:
-            print("Invalid Index")
-            return
-
-        newNode = Node(data)
-
-        if index == 0:
-            newNode.next = self.head
-            self.head = newNode
-        else:
-            temp = self.head
-            track = 0
-            while track < index - 1:
-                temp = temp.next
-                track += 1
-            newNode.next = temp.next
-            temp.next = newNode
-
-        self._count += 1    
-
     def append(self, data):
         newNode = Node(data)
         if self.head is None:
@@ -173,14 +152,6 @@ class LinkedList:
                 self._findprev.next = temp.next
             self._count -= 1
     
-    def reverse2(self):
-        temp = self.head
-        self.head = None
-        self._count = 0
-        while temp is not None:
-            self.insert(temp.data)
-            temp = temp.next
-
     def reverse(self):
         temp = self.head
         prev = None
@@ -193,11 +164,11 @@ class LinkedList:
 
 # Test Cases
 
-def test1():
-    dadList = LinkedList()
-    dadList.insert('first insert')
-    dadList.insert('second insert')
-    dadList.append('first append')
-    dadList.append('second append')
-    return dadList
+def unittest1():
+    sList = LinkedList()
+    sList.insert('first insert')
+    sList.insert('second insert')
+    sList.append('first append')
+    sList.append('second append')
+    return sList
 
