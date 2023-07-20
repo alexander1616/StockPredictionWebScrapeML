@@ -12,8 +12,10 @@ import modelgen.model1 as genmodel1
 import importdata.soupyahoo as yhsoup
 import keras
 import genutil.Timer
+import time
+from datetime import datetime
 
-def runModel(symbol, numDays = 100):
+def createModel(symbol, numDays = 100):
     data = yhget.get_stock_data(symbol, numDays)
    #myGraph.plotData(data, symbol)
     newModel = genmodel1.genModel1(data)
@@ -23,14 +25,33 @@ def predictModel(model, openx, highx, lowx, volx):
     features = np.array([[openx, highx, lowx, volx]])
     return model.predict(features)
 
-@genutil.Timer._timer
+def webStr2Float(s):
+    return float(s)
+
+def webStr2Int(s):
+    return int(s.replace(',', ''))
+
+#@genutil.Timer._timer
 def soupModel(model, symbol):
     soup_data = yhsoup.getStockInfo(symbol)
-    soup_open = float(soup_data["Open"])
-    soup_low = float(soup_data["Day's Range"].split()[0])
-    soup_high = float(soup_data["Day's Range"].split()[2])
-    soup_vol = int(soup_data["Volume"].replace(',', ''))
-    return predictModel(model, soup_open, soup_high, soup_low, soup_vol)
+    soup_open = webStr2Float(soup_data["Open"])
+    soup_low = webStr2Float(soup_data["Day's Range"].split()[0])
+    soup_high = webStr2Float(soup_data["Day's Range"].split()[2])
+    soup_vol = webStr2Int(soup_data["Volume"])
+    soup_bid = webStr2Float(soup_data["Bid"].split()[0])
+    soup_ask = webStr2Float(soup_data["Ask"].split()[0])
+    soup_mid = (soup_ask + soup_bid)/2
+    soup_predict = predictModel(model, soup_open, soup_high, soup_low, soup_vol)
+    now = datetime.now()
+    date_time = now.strftime("%Y%m%d %H:%M:%S")
+    result = "%s %-5s %8.3f %8.3f %8.3f %8d %8.3f %8.3f"%\
+              (date_time, symbol, soup_open, soup_low, soup_high, soup_vol, \
+              soup_predict[0][0], soup_mid)
+    print(result)
+    myFile = open("7-20-23_data", 'a')
+    print(result, file=myFile)
+    myFile.close()
+    return soup_predict
 
 ###
 ### Save and Load from a fixed location
