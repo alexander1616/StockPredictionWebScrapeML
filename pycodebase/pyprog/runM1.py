@@ -44,11 +44,12 @@ def soupModel(model, symbol):
     soup_predict = predictModel(model, soup_open, soup_high, soup_low, soup_vol)
     now = datetime.now()
     date_time = now.strftime("%Y%m%d %H:%M:%S")
+    date_now = now.strftime("%Y%m%d")
     result = "%s %-5s %8.3f %8.3f %8.3f %8d %8.3f %8.3f"%\
               (date_time, symbol, soup_open, soup_low, soup_high, soup_vol, \
               soup_predict[0][0], soup_mid)
     print(result)
-    myFile = open("7-20-23_data", 'a')
+    myFile = open(_dataPathName + date_now + ".data", 'a')
     print(result, file=myFile)
     myFile.close()
     return soup_predict
@@ -69,3 +70,24 @@ def loadModel(filename):
 ###
 if __name__ == '__main__':
     runModel("RIOT", 2000)
+
+###
+### Unit test
+###
+
+def createModelSet1():
+    riot_model = model1.loadModel("riot.m1")
+    jnj_model = model1.loadModel("jnj.m1")
+    dal_model = model1.loadModel("dal.m1")
+    ual_model = model1.loadModel("ual.m1")
+    tsla_model = model1.loadModel("tsla.m1")
+    rivn_model = model1.loadModel("rivn.m1")
+
+def updateInfoSet1():
+    model1.soupModel(riot_model, "RIOT")
+    model1.soupModel(dal_model, "DAL")
+    model1.soupModel(ual_model, "UAL")
+    model1.soupModel(tsla_model, "TSLA")
+    model1.soupModel(rivn_model, "RIVN")
+    model1.soupModel(jnj_model, "JNJ")
+
